@@ -20,7 +20,7 @@ import Link from "next/link";
 import React, { useContext, useState, useEffect, useRef } from "react";
 import { ResumeContext } from "../../contexts/ResumeContext";
 import TemplateTwo from "./TemplateTwo";
-import TemplateFour from "./TemplateFour"
+import TemplateFour from "./TemplateFour";
 import { useSectionTitles } from "../../contexts/SectionTitleContext";
 import {
   DndContext,
@@ -46,6 +46,29 @@ const Preview = () => {
   const [currentTemplate, setCurrentTemplate] = useState("template1");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const handleExportPDF = () => {
+    // Remove height restrictions temporarily for print
+    const previewContainer = document.querySelector(".preview");
+    const resumeContainer = document.querySelector(".resume-container");
+
+    if (previewContainer && resumeContainer) {
+      const originalOverflow = previewContainer.style.overflow;
+      const originalMaxHeight = resumeContainer.style.maxHeight;
+
+      previewContainer.style.overflow = "visible";
+      resumeContainer.style.maxHeight = "none";
+
+      window.print();
+
+      // Restore after print dialog closes
+      setTimeout(() => {
+        previewContainer.style.overflow = originalOverflow;
+        resumeContainer.style.maxHeight = originalMaxHeight;
+      }, 100);
+    } else {
+      window.print();
+    }
+  };
 
   // Handle client-side initialization
   useEffect(() => {
@@ -171,9 +194,9 @@ const Preview = () => {
     { name: "website", icon: <CgWebsite /> },
     { name: "github", icon: <ImGithub /> },
     { name: "leetcode", icon: <SiLeetcode /> },
-    {name: "hackerrank", icon: <FaHackerrank />},
-    {name: "hacker rank", icon: <FaHackerrank />},
-    {name: "codeforces", icon: <SiCodeforces />}
+    { name: "hackerrank", icon: <FaHackerrank /> },
+    { name: "hacker rank", icon: <FaHackerrank /> },
+    { name: "codeforces", icon: <SiCodeforces /> },
   ];
 
   const sensors = useSensors(
@@ -268,18 +291,18 @@ const Preview = () => {
   };
 
   return (
-  <div className="w-full h-screen preview rm-padding-print bg-gray-50">
-  <div className="sticky top-0 z-50 bg-gray-50 py-2 px-4 sm:px-6 exclude-print border-b border-gray-200 shadow-sm">
-    <div className="flex justify-end gap-2 sm:gap-3">
-      <div className="relative" ref={toggleRef}>
+    <div className="w-full h-screen print:h-auto preview rm-padding-print bg-gray-50">
+      <div className="sticky top-0 z-50 bg-gray-50 py-2 px-4 sm:px-6 exclude-print border-b border-gray-200 shadow-sm">
+        <div className="flex justify-end gap-2 sm:gap-3">
+          <div className="relative" ref={toggleRef}>
             <button
               onClick={() => setShowSectionToggle(!showSectionToggle)}
-              className='flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-3 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors shadow-lg text-xs sm:text-sm'
-              title='Toggle Sections'
+              className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-3 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors shadow-lg text-xs sm:text-sm"
+              title="Toggle Sections"
             >
-              <FaTh className='w-3 h-3 sm:w-4 sm:h-4' />
-              <span className='font-medium hidden sm:inline'>Sections</span>
-              <span className='font-medium sm:hidden'>Sec</span>
+              <FaTh className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="font-medium hidden sm:inline">Sections</span>
+              <span className="font-medium sm:hidden">Sec</span>
               <FaChevronDown
                 className={`w-2 h-2 sm:w-3 sm:h-3 transition-transform ${showSectionToggle ? "rotate-180" : ""}`}
               />
@@ -287,42 +310,42 @@ const Preview = () => {
 
             {/* Section Toggle Dropdown */}
             {showSectionToggle && (
-              <div className='absolute right-0 mt-2 w-64 sm:w-72 bg-white rounded-lg shadow-lg border border-gray-200 py-3'>
-                <div className='px-3 sm:px-4 pb-2 border-b border-gray-200'>
-                  <h3 className='text-xs sm:text-sm font-semibold text-gray-900'>
+              <div className="absolute right-0 mt-2 w-64 sm:w-72 bg-white rounded-lg shadow-lg border border-gray-200 py-3">
+                <div className="px-3 sm:px-4 pb-2 border-b border-gray-200">
+                  <h3 className="text-xs sm:text-sm font-semibold text-gray-900">
                     Toggle Resume Sections
                   </h3>
-                  <p className='text-xs text-gray-600 mt-1'>
+                  <p className="text-xs text-gray-600 mt-1">
                     Hide sections you don&apos;t need (e.g., freshers can hide
                     experience)
                   </p>
                 </div>
-                <div className='py-2 max-h-60 overflow-y-auto'>
+                <div className="py-2 max-h-60 overflow-y-auto">
                   {defaultSections.map((sectionId) => (
                     <label
                       key={sectionId}
-                      className='flex items-center gap-3 px-4 py-2 hover:bg-pink-50 cursor-pointer'
+                      className="flex items-center gap-3 px-4 py-2 hover:bg-pink-50 cursor-pointer"
                     >
                       <input
-                        type='checkbox'
+                        type="checkbox"
                         checked={enabledSections[sectionId]}
                         onChange={() => toggleSection(sectionId)}
-                        className='w-4 h-4 text-pink-600 bg-white border-2 border-gray-300 rounded focus:ring-pink-500 focus:ring-2 checked:bg-pink-600 checked:border-pink-600'
+                        className="w-4 h-4 text-pink-600 bg-white border-2 border-gray-300 rounded focus:ring-pink-500 focus:ring-2 checked:bg-pink-600 checked:border-pink-600"
                       />
-                      <span className='text-sm text-gray-900 flex-1'>
+                      <span className="text-sm text-gray-900 flex-1">
                         {sectionLabels[sectionId]}
                       </span>
                       {!enabledSections[sectionId] && (
                         <FaEyeSlash
-                          className='w-4 h-4 text-gray-400'
-                          title='Hidden'
+                          className="w-4 h-4 text-gray-400"
+                          title="Hidden"
                         />
                       )}
                     </label>
                   ))}
                 </div>
-                <div className='px-4 pt-2 border-t border-gray-200'>
-                  <div className='text-xs text-gray-500'>
+                <div className="px-4 pt-2 border-t border-gray-200">
+                  <div className="text-xs text-gray-500">
                     {Object.values(enabledSections).filter(Boolean).length} of{" "}
                     {defaultSections.length} sections visible
                   </div>
@@ -332,16 +355,16 @@ const Preview = () => {
           </div>
 
           {/* Template Selector */}
-          <div className='relative' ref={dropdownRef}>
+          <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className='flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-3 bg-zinc-800 text-white rounded-lg hover:bg-zinc-700 transition-colors shadow-lg text-xs sm:text-sm'
+              className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-3 bg-zinc-800 text-white rounded-lg hover:bg-zinc-700 transition-colors shadow-lg text-xs sm:text-sm"
             >
-              <FaFileAlt className='w-3 h-3 sm:w-4 sm:h-4' />
-              <span className='font-medium hidden sm:inline'>
+              <FaFileAlt className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="font-medium hidden sm:inline">
                 {templates.find((t) => t.id === currentTemplate)?.name}
               </span>
-              <span className='font-medium sm:hidden'>
+              <span className="font-medium sm:hidden">
                 {
                   templates
                     .find((t) => t.id === currentTemplate)
@@ -355,7 +378,7 @@ const Preview = () => {
 
             {/* Dropdown Menu */}
             {isDropdownOpen && (
-              <div className='absolute right-0 mt-2 w-56 sm:w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2'>
+              <div className="absolute right-0 mt-2 w-56 sm:w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2">
                 {templates.map((template) => {
                   const IconComponent = template.icon;
                   return (
@@ -374,18 +397,18 @@ const Preview = () => {
                       <IconComponent
                         className={`w-4 h-4 ${currentTemplate === template.id ? "text-pink-600" : "text-gray-600"}`}
                       />
-                      <div className='text-left'>
+                      <div className="text-left">
                         <div
                           className={`font-medium text-sm ${currentTemplate === template.id ? "text-pink-900" : "text-gray-900"}`}
                         >
                           {template.name}
                         </div>
-                        <div className='text-xs text-gray-500'>
+                        <div className="text-xs text-gray-500">
                           {template.description}
                         </div>
                       </div>
                       {currentTemplate === template.id && (
-                        <div className='ml-auto w-2 h-2 bg-blue-500 rounded-full'></div>
+                        <div className="ml-auto w-2 h-2 bg-blue-500 rounded-full"></div>
                       )}
                     </button>
                   );
@@ -393,59 +416,79 @@ const Preview = () => {
               </div>
             )}
           </div>
+
+          <button
+            onClick={handleExportPDF}
+            className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-lg text-xs sm:text-sm"
+            title="Export as PDF"
+          >
+            <svg
+              className="w-3 h-3 sm:w-4 sm:h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
+            <span className="font-medium hidden sm:inline">Export PDF</span>
+            <span className="font-medium sm:hidden">PDF</span>
+          </button>
         </div>
       </div>
-        <div className="overflow-y-auto" style={{ height: 'calc(100vh - 60px)' }}>
-
-      <A4PageWrapper>
-        
-        {currentTemplate === "template1" ? (
-          <ClassicTemplate
-            resumeData={resumeData}
-            sectionOrder={sectionOrder}
-            enabledSections={enabledSections}
-            handleDragEnd={handleDragEnd}
-            sensors={sensors}
-            icons={icons}
-            setResumeData={setResumeData}
-          />
-        ) : currentTemplate === "template2" ? (
-          <TemplateTwo
-            namedata={resumeData.name}
-            positionData={resumeData.position}
-            contactData={resumeData.contactInformation}
-            emailData={resumeData.email}
-            addressData={resumeData.address}
-            telIcon={<MdPhone />}
-            emailIcon={<MdEmail />}
-            addressIcon={<MdLocationOn />}
-            summaryData={resumeData.summary}
-            educationData={resumeData.education}
-            projectsData={resumeData.projects}
-            workExperienceData={resumeData.workExperience}
-            skillsData={resumeData.skills}
-            languagesData={resumeData.languages}
-            certificationsData={resumeData.certifications}
-            sectionOrder={sectionOrder}
-            enabledSections={enabledSections}
-            onDragEnd={onDragEnd}
-            resumeData={resumeData}
-            setResumeData={setResumeData}
-          />
-        ) : (
-          <TemplateFour
-            resumeData={resumeData}
-            sectionOrder={sectionOrder}
-            enabledSections={enabledSections}
-            handleDragEnd={handleDragEnd}
-            sensors={sensors}
-            icons={icons}
-            setResumeData={setResumeData}
-          />
-        )}
-      </A4PageWrapper>
+      <div className="h-[calc(100vh-60px)] print:h-auto overflow-y-auto print:overflow-visible">
+        <A4PageWrapper>
+          {currentTemplate === "template1" ? (
+            <ClassicTemplate
+              resumeData={resumeData}
+              sectionOrder={sectionOrder}
+              enabledSections={enabledSections}
+              handleDragEnd={handleDragEnd}
+              sensors={sensors}
+              icons={icons}
+              setResumeData={setResumeData}
+            />
+          ) : currentTemplate === "template2" ? (
+            <TemplateTwo
+              namedata={resumeData.name}
+              positionData={resumeData.position}
+              contactData={resumeData.contactInformation}
+              emailData={resumeData.email}
+              addressData={resumeData.address}
+              telIcon={<MdPhone />}
+              emailIcon={<MdEmail />}
+              addressIcon={<MdLocationOn />}
+              summaryData={resumeData.summary}
+              educationData={resumeData.education}
+              projectsData={resumeData.projects}
+              workExperienceData={resumeData.workExperience}
+              skillsData={resumeData.skills}
+              languagesData={resumeData.languages}
+              certificationsData={resumeData.certifications}
+              sectionOrder={sectionOrder}
+              enabledSections={enabledSections}
+              onDragEnd={onDragEnd}
+              resumeData={resumeData}
+              setResumeData={setResumeData}
+            />
+          ) : (
+            <TemplateFour
+              resumeData={resumeData}
+              sectionOrder={sectionOrder}
+              enabledSections={enabledSections}
+              handleDragEnd={handleDragEnd}
+              sensors={sensors}
+              icons={icons}
+              setResumeData={setResumeData}
+            />
+          )}
+        </A4PageWrapper>
+      </div>
     </div>
-  </div>
   );
 };
 
@@ -600,26 +643,33 @@ const ClassicTemplate = ({
       case "summary":
         return (
           <div>
-            <h2 className='section-title border-b-2 border-gray-300 mb-1 text-gray-900'>
+            <h2 className="section-title border-b-2 border-gray-300 mb-1 text-gray-900">
               {customSectionTitles.summary || "Professional Summary"}
             </h2>
-            <p className="content font-sans  text-black text-justify">{resumeData.summary}</p>
+            <p className="content font-sans  text-black text-justify">
+              {resumeData.summary}
+            </p>
           </div>
         );
 
       case "education":
         return resumeData.education.length > 0 ? (
           <div>
-            <h2 className='section-title border-b-2 border-gray-300 mb-1 text-gray-900'>
+            <h2 className="section-title border-b-2 border-gray-300 mb-1 text-gray-900">
               {customSectionTitles.education || "Education"}
             </h2>
             {resumeData.education.map((item, index) => (
-              <div key={index} className="mb-1 flex justify-between items-start">
+              <div
+                key={index}
+                className="mb-1 flex justify-between items-start"
+              >
                 <div className="flex-1">
-                  <h3 className="content font-semibold text-gray-900">{item.school}</h3>
+                  <h3 className="content font-semibold text-gray-900">
+                    {item.school}
+                  </h3>
                   <p className="content font-sans  text-black">{item.degree}</p>
                 </div>
-                <div className='ml-4 text-right'>
+                <div className="ml-4 text-right">
                   <DateRange
                     startYear={item.startYear}
                     endYear={item.endYear}
@@ -634,7 +684,7 @@ const ClassicTemplate = ({
       case "experience":
         return resumeData.workExperience.length > 0 ? (
           <div>
-            <h2 className='section-title border-b-2 border-gray-300 mb-1 text-gray-900'>
+            <h2 className="section-title border-b-2 border-gray-300 mb-1 text-gray-900">
               {customSectionTitles.experience || "Professional Experience"}
             </h2>
             <DndContext
@@ -650,9 +700,11 @@ const ClassicTemplate = ({
                   <SortableItem key={`work-${index}`} id={`work-${index}`}>
                     <div className="flex justify-between items-start mb-[0.5]">
                       <div className="flex-1">
-                        <h3 className="content i-bold text-gray-900">{item.position} - {item.company}</h3>
+                        <h3 className="content i-bold text-gray-900">
+                          {item.position} - {item.company}
+                        </h3>
                       </div>
-                      <div className='text-right'>
+                      <div className="text-right">
                         <DateRange
                           startYear={item.startYear}
                           endYear={item.endYear}
@@ -660,19 +712,22 @@ const ClassicTemplate = ({
                         />
                       </div>
                     </div>
-                    <p className="content font-sans  text-black mb-1">{item.description}</p>
-                    {typeof item.keyAchievements === "string" && item.keyAchievements.trim() && (
-                      <ul className="list-disc list-inside content font-sans  text-black ml-4">
-                        {item.keyAchievements
-                          .split("\n")
-                          .filter(achievement => achievement.trim())
-                          .map((achievement, subIndex) => (
-                            <li key={`${item.company}-${index}-${subIndex}`}>
-                              {achievement}
-                            </li>
-                          ))}
-                      </ul>
-                    )}
+                    <p className="content font-sans  text-black mb-1">
+                      {item.description}
+                    </p>
+                    {typeof item.keyAchievements === "string" &&
+                      item.keyAchievements.trim() && (
+                        <ul className="list-disc list-inside content font-sans  text-black ml-4">
+                          {item.keyAchievements
+                            .split("\n")
+                            .filter((achievement) => achievement.trim())
+                            .map((achievement, subIndex) => (
+                              <li key={`${item.company}-${index}-${subIndex}`}>
+                                {achievement}
+                              </li>
+                            ))}
+                        </ul>
+                      )}
                   </SortableItem>
                 ))}
               </SortableContext>
@@ -683,7 +738,7 @@ const ClassicTemplate = ({
       case "projects":
         return resumeData.projects.length > 0 ? (
           <div>
-            <h2 className='section-title border-b-2 border-gray-300 mb-1 text-gray-900'>
+            <h2 className="section-title border-b-2 border-gray-300 mb-1 text-gray-900">
               {customSectionTitles.projects || "Projects"}
             </h2>
             <DndContext
@@ -700,25 +755,25 @@ const ClassicTemplate = ({
                     key={`project-${index}`}
                     id={`project-${index}`}
                   >
-                    <div className='flex justify-between items-start mb-1'>
-                      <div className='flex-1'>
-                        <div className='flex items-center gap-2'>
-                          <h3 className='content i-bold text-gray-900'>
+                    <div className="flex justify-between items-start mb-1">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <h3 className="content i-bold text-gray-900">
                             {item.name}
                           </h3>
                           {item.link && (
                             <Link
                               href={item.link}
-                              className='text-blue-600 hover:text-blue-800 transition-colors'
-                              target='_blank'
-                              rel='noopener noreferrer'
+                              className="text-blue-600 hover:text-blue-800 transition-colors"
+                              target="_blank"
+                              rel="noopener noreferrer"
                             >
-                              <FaExternalLinkAlt className='w-3 h-3' />
+                              <FaExternalLinkAlt className="w-3 h-3" />
                             </Link>
                           )}
                         </div>
                       </div>
-                      <div className='text-right'>
+                      <div className="text-right">
                         <DateRange
                           startYear={item.startYear}
                           endYear={item.endYear}
@@ -726,19 +781,22 @@ const ClassicTemplate = ({
                         />
                       </div>
                     </div>
-                    <p className="content font-sans  text-black mb-1">{item.description}</p>
-                    {typeof item.keyAchievements === "string" && item.keyAchievements.trim() && (
-                      <ul className="list-disc list-inside content font-sans  text-black ml-4">
-                        {item.keyAchievements
-                          .split("\n")
-                          .filter(achievement => achievement.trim())
-                          .map((achievement, subIndex) => (
-                            <li key={`${item.name}-${index}-${subIndex}`}>
-                              {achievement}
-                            </li>
-                          ))}
-                      </ul>
-                    )}
+                    <p className="content font-sans  text-black mb-1">
+                      {item.description}
+                    </p>
+                    {typeof item.keyAchievements === "string" &&
+                      item.keyAchievements.trim() && (
+                        <ul className="list-disc list-inside content font-sans  text-black ml-4">
+                          {item.keyAchievements
+                            .split("\n")
+                            .filter((achievement) => achievement.trim())
+                            .map((achievement, subIndex) => (
+                              <li key={`${item.name}-${index}-${subIndex}`}>
+                                {achievement}
+                              </li>
+                            ))}
+                        </ul>
+                      )}
                   </SortableItem>
                 ))}
               </SortableContext>
@@ -749,15 +807,19 @@ const ClassicTemplate = ({
       case "skills":
         return (
           <div>
-            <h2 className='section-title border-b-2 border-gray-300 mb-1 text-gray-900'>
+            <h2 className="section-title border-b-2 border-gray-300 mb-1 text-gray-900">
               {customSectionTitles.skills || "Technical Skills"}
             </h2>
             {resumeData.skills
               .filter((skill) => skill.title !== "Soft Skills")
               .map((skill, index) => (
                 <div key={`SKILLS-${index}`} className="mb-1">
-                  <h3 className="content i-bold text-gray-900 mb-1">{skill.title}</h3>
-                  <p className="content font-sans  text-black">{skill.skills.join(", ")}</p>
+                  <h3 className="content i-bold text-gray-900 mb-1">
+                    {skill.title}
+                  </h3>
+                  <p className="content font-sans  text-black">
+                    {skill.skills.join(", ")}
+                  </p>
                 </div>
               ))}
           </div>
@@ -766,11 +828,13 @@ const ClassicTemplate = ({
       case "softSkills":
         return (
           <div>
-            <h2 className='section-title border-b-2 border-gray-300 mb-1 text-gray-900'>
+            <h2 className="section-title border-b-2 border-gray-300 mb-1 text-gray-900">
               {customSectionTitles.softSkills || "Soft Skills"}
             </h2>
             <p className="content font-sans  text-black">
-              {resumeData.skills.find(skill => skill.title === "Soft Skills")?.skills?.join(", ")}
+              {resumeData.skills
+                .find((skill) => skill.title === "Soft Skills")
+                ?.skills?.join(", ")}
             </p>
           </div>
         );
@@ -778,27 +842,32 @@ const ClassicTemplate = ({
       case "languages":
         return resumeData.languages.length > 0 ? (
           <div>
-            <h2 className='section-title border-b-2 border-gray-300 mb-1 text-gray-900'>
+            <h2 className="section-title border-b-2 border-gray-300 mb-1 text-gray-900">
               {customSectionTitles.languages || "Languages"}
             </h2>
-            <p className="content font-sans  text-black">{resumeData.languages.join(", ")}</p>
+            <p className="content font-sans  text-black">
+              {resumeData.languages.join(", ")}
+            </p>
           </div>
         ) : null;
 
       case "certifications":
         return resumeData.certifications.length > 0 ? (
           <div>
-            <h2 className='section-title border-b-2 border-gray-300 mb-1 text-gray-900'>
+            <h2 className="section-title border-b-2 border-gray-300 mb-1 text-gray-900">
               {customSectionTitles.certifications || "Certifications"}
             </h2>
             <ul className="list-disc list-inside content font-sans  text-black">
               {resumeData.certifications.map((cert, index) => (
-                <li key={index} className='mb-1'>
-                  <div className='flex items-center gap-2'>
+                <li key={index} className="mb-1">
+                  <div className="flex items-center gap-2">
                     <span>
-                      {typeof cert === 'string' ? cert : cert.name}
-                      {typeof cert === 'object' && cert.issuer && (
-                        <span className="font-sans  text-black"> - {cert.issuer}</span>
+                      {typeof cert === "string" ? cert : cert.name}
+                      {typeof cert === "object" && cert.issuer && (
+                        <span className="font-sans  text-black">
+                          {" "}
+                          - {cert.issuer}
+                        </span>
                       )}
                     </span>
                     {typeof cert === "object" &&
@@ -806,11 +875,11 @@ const ClassicTemplate = ({
                       cert.link.trim() !== "" && (
                         <Link
                           href={cert.link}
-                          className='text-blue-600 hover:text-blue-800 transition-colors'
-                          target='_blank'
-                          rel='noopener noreferrer'
+                          className="text-blue-600 hover:text-blue-800 transition-colors"
+                          target="_blank"
+                          rel="noopener noreferrer"
                         >
-                          <FaExternalLinkAlt className='w-3 h-3' />
+                          <FaExternalLinkAlt className="w-3 h-3" />
                         </Link>
                       )}
                   </div>
@@ -829,18 +898,22 @@ const ClassicTemplate = ({
   if (!isClient) {
     return (
       <div className="w-full h-full bg-white p-4">
-        <div className="text-center mb-1
+        <div
+          className="text-center mb-1
         
         
         
-        ">
-          <h1 className="text-2xl font-bold text-gray-900">{resumeData.name}</h1>
+        "
+        >
+          <h1 className="text-2xl font-bold text-gray-900">
+            {resumeData.name}
+          </h1>
           <p className="text-lg text-gray-700">{resumeData.position}</p>
         </div>
-        <div className='animate-pulse'>
-          <div className='space-y-4'>
+        <div className="animate-pulse">
+          <div className="space-y-4">
             {orderedSections.map((section) => (
-              <div key={section.id} className='h-16 bg-gray-200 rounded'></div>
+              <div key={section.id} className="h-16 bg-gray-200 rounded"></div>
             ))}
           </div>
         </div>
@@ -851,26 +924,26 @@ const ClassicTemplate = ({
   return (
     <div className="w-full h-full bg-white p-0">
       {/* Professional Header */}
-      <div className="text-center mb-0 no-break">
-        <h1 className="name">{resumeData.name}</h1>
-        <h2 className="profession">{resumeData.position}</h2>
-        
+      <div className="text-center mb-3 no-break">
+        <h1 className="name mb-1">{resumeData.name}</h1>
+        <h2 className="profession mb-2">{resumeData.position}</h2>
+
         {/* Contact Information */}
-        <div className="flex justify-center items-center flex-wrap gap-x-3 gap-y-1 contact mb-2 px-2">
-  <div className="flex items-center gap-1 whitespace-nowrap">
-    <MdPhone className="text-gray-500 flex-shrink-0" />
-    <span className="text-xs sm:text-sm break-all">{resumeData.contactInformation}</span>
-  </div>
-  <div className="flex items-center gap-1 whitespace-nowrap">
-    <MdEmail className="text-gray-500 flex-shrink-0" />
-    <span className="text-xs sm:text-sm break-all">{resumeData.email}</span>
-  </div>
-  <div className="flex items-center gap-1 whitespace-nowrap">
-    <MdLocationOn className="text-gray-500 flex-shrink-0" />
-    <span className="text-xs sm:text-sm">{resumeData.address}</span>
-  </div>
-</div>
-        
+        <div className="flex justify-center items-center flex-wrap gap-x-4 gap-y-1 contact mb-2">
+          <div className="flex items-center gap-1">
+            <MdPhone className="text-gray-600 flex-shrink-0 w-3 h-3" />
+            <span>{resumeData.contactInformation}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <MdEmail className="text-gray-600 flex-shrink-0 w-3 h-3" />
+            <span className="break-all">{resumeData.email}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <MdLocationOn className="text-gray-600 flex-shrink-0 w-3 h-3" />
+            <span>{resumeData.address}</span>
+          </div>
+        </div>
+
         {/* Social Media */}
         {resumeData.socialMedia.length > 0 && (
           <div className="flex justify-center items-center flex-wrap gap-2 sm:gap-3 text-xs sm:text-sm px-2">
@@ -888,9 +961,9 @@ const ClassicTemplate = ({
                         : "https://www."
                   }${socialMedia.link}`}
                   key={index}
-                  className='inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 transition-colors'
-                  target='_blank'
-                  rel='noopener noreferrer'
+                  className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 transition-colors"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   {icon && icon.icon}
                   <span>{socialMedia.link}</span>
@@ -926,60 +999,60 @@ const A4PageWrapper = ({ children }) => {
   // const [isOverflowing, setIsOverflowing] = useState(false);
   // const contentRef = useRef(null);
 
-//   useEffect(() => {
-//     const checkOverflow = () => {
-//       if (contentRef.current) {
-//         // Get the actual A4 dimensions in pixels (at 96 DPI)
-//         // A4 = 210mm x 297mm = 793.7px x 1122.5px at 96 DPI
-//         const isMobile = window.innerWidth <= 768;
-// const a4HeightPx = isMobile ? window.innerHeight : 1122.5;
-// const marginsPx = isMobile ? 0 : (10 + 10) * 3.7795;
-//         const availableHeight = a4HeightPx - marginsPx;
-        
-//         // Get the actual content height
-//         const contentHeight = contentRef.current.scrollHeight;
-        
-//         // Check if content exceeds available space
-//         const overflow = contentHeight > availableHeight;
-        
-//         // A4 Height Check (console log removed)
-        
-//         setIsOverflowing(overflow);
-//       }
-//     };
+  //   useEffect(() => {
+  //     const checkOverflow = () => {
+  //       if (contentRef.current) {
+  //         // Get the actual A4 dimensions in pixels (at 96 DPI)
+  //         // A4 = 210mm x 297mm = 793.7px x 1122.5px at 96 DPI
+  //         const isMobile = window.innerWidth <= 768;
+  // const a4HeightPx = isMobile ? window.innerHeight : 1122.5;
+  // const marginsPx = isMobile ? 0 : (10 + 10) * 3.7795;
+  //         const availableHeight = a4HeightPx - marginsPx;
 
-//     // Initial check with longer delay to ensure content is rendered
-//     const timeoutId = setTimeout(checkOverflow, 200);
-    
-//     // More frequent checks to catch content changes
-//     const intervalId = setInterval(checkOverflow, 500);
-    
-//     // Check on resize
-//     window.addEventListener('resize', checkOverflow);
-    
-//     // Enhanced mutation observer
-//     const observer = new MutationObserver(() => {
-//       setTimeout(checkOverflow, 100);
-//     });
-    
-//     if (contentRef.current) {
-//       observer.observe(contentRef.current, { 
-//         childList: true, 
-//         subtree: true, 
-//         characterData: true,
-//         attributes: true,
-//         attributeOldValue: true,
-//         characterDataOldValue: true
-//       });
-//     }
+  //         // Get the actual content height
+  //         const contentHeight = contentRef.current.scrollHeight;
 
-//     return () => {
-//       clearTimeout(timeoutId);
-//       clearInterval(intervalId);
-//       window.removeEventListener('resize', checkOverflow);
-//       observer.disconnect();
-//     };
-//   }, []);
+  //         // Check if content exceeds available space
+  //         const overflow = contentHeight > availableHeight;
+
+  //         // A4 Height Check (console log removed)
+
+  //         setIsOverflowing(overflow);
+  //       }
+  //     };
+
+  //     // Initial check with longer delay to ensure content is rendered
+  //     const timeoutId = setTimeout(checkOverflow, 200);
+
+  //     // More frequent checks to catch content changes
+  //     const intervalId = setInterval(checkOverflow, 500);
+
+  //     // Check on resize
+  //     window.addEventListener('resize', checkOverflow);
+
+  //     // Enhanced mutation observer
+  //     const observer = new MutationObserver(() => {
+  //       setTimeout(checkOverflow, 100);
+  //     });
+
+  //     if (contentRef.current) {
+  //       observer.observe(contentRef.current, {
+  //         childList: true,
+  //         subtree: true,
+  //         characterData: true,
+  //         attributes: true,
+  //         attributeOldValue: true,
+  //         characterDataOldValue: true
+  //       });
+  //     }
+
+  //     return () => {
+  //       clearTimeout(timeoutId);
+  //       clearInterval(intervalId);
+  //       window.removeEventListener('resize', checkOverflow);
+  //       observer.disconnect();
+  //     };
+  //   }, []);
 
   return (
     <div className="w-full flex justify-center p-2 md:p-4 lg:p-6 print:p-0 bg-gray-50">
