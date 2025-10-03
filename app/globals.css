@@ -165,11 +165,23 @@
 
     /* Print optimization for lists */
     @media print {
-        ul.list-disc li {
-            line-height: 1.2;
-            margin-bottom: 0.1rem;
-        }
+    .resume-container {
+        width: 100% !important;
+        max-width: none !important;
+        height: auto !important;
+        max-height: none !important;
+        margin: 0 !important;
+        padding: 10mm 12mm !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        overflow: visible !important;
     }
+    
+    .preview-content {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+}
   :root {
         --background: 0 0% 100%;
         --foreground: 0 0% 3.9%;
@@ -486,22 +498,61 @@
         @apply hover:bg-gray-100 hover:cursor-text outline-none;
     }
 
-    /* A4 Paper Preview Styles - Exact Print Match */
-    .a4-preview {
-        /* A4 dimensions: 210mm x 297mm = 793.7px x 1122.5px at 96 DPI */
-        width: 793.7px;
-        height: 1122.5px;
-        max-width: 90vw;
-        margin: 0 auto;
-        background: white;
-        box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        border-radius: 8px;
-        overflow: hidden;
-        position: relative;
-        /* Margins: 10mm = 37.8px at 96 DPI, 12mm = 45.4px */
-        padding: 37.8px 45.4px;
-        box-sizing: border-box;
+    .resume-container {
+    width: 793.7px;
+    max-width: 90vw;
+    margin: 0 auto;
+    background: white;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    border-radius: 8px;
+    overflow-y: auto;
+    max-height: calc(100vh - 100px);
+    padding: 37.8px 45.4px;
+    box-sizing: border-box;
+}
+
+.resume-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.resume-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.resume-container::-webkit-scrollbar-thumb {
+    background: #ec4899;
+    border-radius: 4px;
+}
+
+.resume-container::-webkit-scrollbar-thumb:hover {
+    background: #db2777;
+}
+
+@media (max-width: 768px) {
+    .resume-container {
+        width: 100%;
+        max-width: 100%;
+        max-height: calc(100vh - 80px);
+        padding: 20px 16px;
+        border-radius: 0;
+        box-shadow: none;
     }
+}
+
+@media (min-width: 769px) and (max-width: 1023px) {
+    .resume-container {
+        max-width: 95vw;
+        max-height: calc(100vh - 90px);
+        padding: 30px 35px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .resume-container {
+        max-height: calc(100vh - 120px);
+    }
+}
     
     /* Remove the custom content padding since we're using exact margins */
     .a4-preview .preview-content {
@@ -532,15 +583,20 @@
         opacity: 1;
     }
 
-    @media (max-width: 768px) {
-        .a4-preview {
-            max-width: 95vw;
-            box-shadow: 0 0 5px rgba(0,0,0,0.1);
-            transform: scale(0.7);
-            transform-origin: top center;
-            margin-bottom: 80px; /* Add space for scaled content */
-        }
+   @media (max-width: 768px) {
+    .a4-preview {
+        width: 100vw;
+        max-width: 100vw;
+        height: auto;
+        min-height: 100vh;
+        transform: none;
+        transform-origin: unset;
+        margin: 0;
+        padding: 8mm 6mm;
+        border-radius: 0;
+        box-shadow: none;
     }
+}
 
     @media (min-width: 769px) and (max-width: 1023px) {
         .a4-preview {
@@ -729,6 +785,17 @@ input[type="date"]:focus-within {
     font-size: 14px;
     font-weight: 400;
     line-height: 1.3;
+}
+@media (max-width: 768px) {
+    .contact {
+        font-size: 10px;
+        line-height: 1.2;
+        flex-wrap: wrap;
+    }
+    
+    .contact > div {
+        margin-bottom: 2px;
+    }
 }
 
 .social-media{
@@ -1046,3 +1113,38 @@ input[type="week"] {
   visibility: visible;
   opacity: 1;
 }
+
+@media (max-width: 768px) {
+    .name {
+        font-size: 16px;
+    }
+    
+    .profession {
+        font-size: 13px;
+    }
+    
+    .section-title {
+        font-size: 14px;
+    }
+    
+    .content {
+        font-size: 12px;
+    }
+}
+
+.preview-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgb(249 250 251);
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid rgb(229 231 235);
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+@media (max-width: 640px) {
+    .preview-header {
+        padding: 0.5rem;
+    }
+}
+

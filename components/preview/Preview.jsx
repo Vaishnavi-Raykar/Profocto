@@ -254,12 +254,10 @@ const Preview = () => {
   };
 
   return (
-    <div className="w-full h-screen sticky top-0 preview rm-padding-print overflow-y-auto bg-gray-50">
-      {/* Template Dropdown */}
-      <div className="absolute top-2   right-4 sm:right-6 z-50 exclude-print">
-        <div className="flex flex-row  gap-2 sm:gap-3">
-          {/* Section Toggle Button */}
-          <div className="relative" ref={toggleRef}>
+  <div className="w-full h-screen preview rm-padding-print bg-gray-50">
+  <div className="sticky top-0 z-50 bg-gray-50 py-2 px-4 sm:px-6 exclude-print border-b border-gray-200 shadow-sm">
+    <div className="flex justify-end gap-2 sm:gap-3">
+      <div className="relative" ref={toggleRef}>
             <button
               onClick={() => setShowSectionToggle(!showSectionToggle)}
               className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-3 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors shadow-lg text-xs sm:text-sm"
@@ -358,7 +356,10 @@ const Preview = () => {
           </div>
         </div>
       </div>
+        <div className="overflow-y-auto" style={{ height: 'calc(100vh - 60px)' }}>
+
       <A4PageWrapper>
+        
         {currentTemplate === "template1" ? (
           <ClassicTemplate 
             resumeData={resumeData} 
@@ -395,6 +396,7 @@ const Preview = () => {
         )}
       </A4PageWrapper>
     </div>
+  </div>
   );
 };
 
@@ -772,24 +774,24 @@ const ClassicTemplate = ({
         <h2 className="profession">{resumeData.position}</h2>
         
         {/* Contact Information */}
-        <div className="flex justify-center items-center gap-2 contact mb-0">
-          <div className="flex items-center gap-1">
-            <MdPhone className="text-gray-500" />
-            <span>{resumeData.contactInformation}</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <MdEmail className="text-gray-500" />
-            <span>{resumeData.email}</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <MdLocationOn className="text-gray-500" />
-            <span>{resumeData.address}</span>
-          </div>
-        </div>
+        <div className="flex justify-center items-center flex-wrap gap-x-3 gap-y-1 contact mb-2 px-2">
+  <div className="flex items-center gap-1 whitespace-nowrap">
+    <MdPhone className="text-gray-500 flex-shrink-0" />
+    <span className="text-xs sm:text-sm break-all">{resumeData.contactInformation}</span>
+  </div>
+  <div className="flex items-center gap-1 whitespace-nowrap">
+    <MdEmail className="text-gray-500 flex-shrink-0" />
+    <span className="text-xs sm:text-sm break-all">{resumeData.email}</span>
+  </div>
+  <div className="flex items-center gap-1 whitespace-nowrap">
+    <MdLocationOn className="text-gray-500 flex-shrink-0" />
+    <span className="text-xs sm:text-sm">{resumeData.address}</span>
+  </div>
+</div>
         
         {/* Social Media */}
         {resumeData.socialMedia.length > 0 && (
-          <div className="flex justify-center items-center gap-3 text-sm">
+          <div className="flex justify-center items-center flex-wrap gap-2 sm:gap-3 text-xs sm:text-sm px-2">
             {resumeData.socialMedia.map((socialMedia, index) => {
               const icon = icons.find(icon => icon.name === socialMedia.socialMedia.toLowerCase());
               return (
@@ -836,78 +838,76 @@ const ClassicTemplate = ({
 };
 
 const A4PageWrapper = ({ children }) => {
-  const [isOverflowing, setIsOverflowing] = useState(false);
-  const contentRef = useRef(null);
+  // const [isOverflowing, setIsOverflowing] = useState(false);
+  // const contentRef = useRef(null);
 
-  useEffect(() => {
-    const checkOverflow = () => {
-      if (contentRef.current) {
-        // Get the actual A4 dimensions in pixels (at 96 DPI)
-        // A4 = 210mm x 297mm = 793.7px x 1122.5px at 96 DPI
-        const a4HeightPx = 1122.5;
-        const marginsPx = (10 + 10) * 3.7795; // 10mm top + 10mm bottom converted to px
-        const availableHeight = a4HeightPx - marginsPx;
+//   useEffect(() => {
+//     const checkOverflow = () => {
+//       if (contentRef.current) {
+//         // Get the actual A4 dimensions in pixels (at 96 DPI)
+//         // A4 = 210mm x 297mm = 793.7px x 1122.5px at 96 DPI
+//         const isMobile = window.innerWidth <= 768;
+// const a4HeightPx = isMobile ? window.innerHeight : 1122.5;
+// const marginsPx = isMobile ? 0 : (10 + 10) * 3.7795;
+//         const availableHeight = a4HeightPx - marginsPx;
         
-        // Get the actual content height
-        const contentHeight = contentRef.current.scrollHeight;
+//         // Get the actual content height
+//         const contentHeight = contentRef.current.scrollHeight;
         
-        // Check if content exceeds available space
-        const overflow = contentHeight > availableHeight;
+//         // Check if content exceeds available space
+//         const overflow = contentHeight > availableHeight;
         
-        // A4 Height Check (console log removed)
+//         // A4 Height Check (console log removed)
         
-        setIsOverflowing(overflow);
-      }
-    };
+//         setIsOverflowing(overflow);
+//       }
+//     };
 
-    // Initial check with longer delay to ensure content is rendered
-    const timeoutId = setTimeout(checkOverflow, 200);
+//     // Initial check with longer delay to ensure content is rendered
+//     const timeoutId = setTimeout(checkOverflow, 200);
     
-    // More frequent checks to catch content changes
-    const intervalId = setInterval(checkOverflow, 500);
+//     // More frequent checks to catch content changes
+//     const intervalId = setInterval(checkOverflow, 500);
     
-    // Check on resize
-    window.addEventListener('resize', checkOverflow);
+//     // Check on resize
+//     window.addEventListener('resize', checkOverflow);
     
-    // Enhanced mutation observer
-    const observer = new MutationObserver(() => {
-      setTimeout(checkOverflow, 100);
-    });
+//     // Enhanced mutation observer
+//     const observer = new MutationObserver(() => {
+//       setTimeout(checkOverflow, 100);
+//     });
     
-    if (contentRef.current) {
-      observer.observe(contentRef.current, { 
-        childList: true, 
-        subtree: true, 
-        characterData: true,
-        attributes: true,
-        attributeOldValue: true,
-        characterDataOldValue: true
-      });
-    }
+//     if (contentRef.current) {
+//       observer.observe(contentRef.current, { 
+//         childList: true, 
+//         subtree: true, 
+//         characterData: true,
+//         attributes: true,
+//         attributeOldValue: true,
+//         characterDataOldValue: true
+//       });
+//     }
 
-    return () => {
-      clearTimeout(timeoutId);
-      clearInterval(intervalId);
-      window.removeEventListener('resize', checkOverflow);
-      observer.disconnect();
-    };
-  }, []);
+//     return () => {
+//       clearTimeout(timeoutId);
+//       clearInterval(intervalId);
+//       window.removeEventListener('resize', checkOverflow);
+//       observer.disconnect();
+//     };
+//   }, []);
 
   return (
-    <div className="w-full  flex justify-center p-2 md:p-4 lg:p-6 print:p-0">
-      <div className={`a4-preview lg:top-10 sm:top-14 top-10 print:shadow-none print:rounded-none print:border-none print:p-0 ${isOverflowing ? 'overflow-content' : ''}`}>
-        <div 
-          ref={contentRef}
-          className="preview-content w-full h-full bg-white text-black relative"
-        >
+    <div className="w-full flex justify-center p-2 md:p-4 lg:p-6 print:p-0 bg-gray-50">
+      <div className="resume-container print:shadow-none print:rounded-none print:border-none print:p-0">
+        <div className="preview-content w-full bg-white text-black">
           {children}
-          {isOverflowing && (
+          {/* {isOverflowing && (
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-red-100 to-transparent h-8 pointer-events-none print:hidden">
               <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 text-red-600 text-xs font-medium bg-red-100 px-2 py-1 rounded">
                 Content will continue on next page
               </div>
             </div>
-          )}
+          )} */}
         </div>
       </div>
     </div>
