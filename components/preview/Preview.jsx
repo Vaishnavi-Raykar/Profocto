@@ -46,29 +46,6 @@ const Preview = () => {
   const [currentTemplate, setCurrentTemplate] = useState("template1");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
-  const handleExportPDF = () => {
-    // Remove height restrictions temporarily for print
-    const previewContainer = document.querySelector(".preview");
-    const resumeContainer = document.querySelector(".resume-container");
-
-    if (previewContainer && resumeContainer) {
-      const originalOverflow = previewContainer.style.overflow;
-      const originalMaxHeight = resumeContainer.style.maxHeight;
-
-      previewContainer.style.overflow = "visible";
-      resumeContainer.style.maxHeight = "none";
-
-      window.print();
-
-      // Restore after print dialog closes
-      setTimeout(() => {
-        previewContainer.style.overflow = originalOverflow;
-        resumeContainer.style.maxHeight = originalMaxHeight;
-      }, 100);
-    } else {
-      window.print();
-    }
-  };
 
   // Handle client-side initialization
   useEffect(() => {
@@ -417,27 +394,6 @@ const Preview = () => {
             )}
           </div>
 
-          <button
-            onClick={handleExportPDF}
-            className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-lg text-xs sm:text-sm"
-            title="Export as PDF"
-          >
-            <svg
-              className="w-3 h-3 sm:w-4 sm:h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-              />
-            </svg>
-            <span className="font-medium hidden sm:inline">Export PDF</span>
-            <span className="font-medium sm:hidden">PDF</span>
-          </button>
         </div>
       </div>
       <div className="h-[calc(100vh-60px)] print:h-auto overflow-y-auto print:overflow-visible">
